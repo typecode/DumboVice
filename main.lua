@@ -22,7 +22,7 @@ createEnemyTimer = createEnemyTimerMax
 player = {
 	x = 0,
 	y = 0,
-	speed = 800,
+	speed = 1000,
 	isAlive = true,
 	img = nil,
 	deadImg = nil
@@ -218,7 +218,7 @@ end
 
 function loadImages()
 
-	player.img = love.graphics.newImage('assets/@2x/plane.png')
+	player.img = love.graphics.newImage('assets/shooter.png')
 	player.deadImg = love.graphics.newImage('assets/shooter.png')
 
 	for i=1, #possibleEnemyPaths do
@@ -447,7 +447,7 @@ function love.draw(dt)
 		end
 
 		for i, enemy in ipairs(enemies) do
-			if isErigaMode then
+			if isErigaMode and enemy.isAlive then
 				love.graphics.draw(possibleEnemyImages[5], enemy.x, enemy.y)
 			else
 				love.graphics.draw(enemy.img, enemy.x, enemy.y)
