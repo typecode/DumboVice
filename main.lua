@@ -281,7 +281,7 @@ function love.update(dt)
 		end
 	end
 
-	if love.keyboard.isDown('e') then
+	if love.keyboard.isDown('e') or (controller and controller:isDown("9")) then
 		isErigaMode = true
 	end
 
