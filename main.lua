@@ -27,6 +27,7 @@ score = 0
 -- Image Storage
 bulletImg = nil
 bgImg = nil
+startImg = nil
 
 possibleEnemyPaths = {
 	'assets/@2x/andrew.png',
@@ -136,6 +137,7 @@ function loadImages()
 	bulletImg = love.graphics.newImage('assets/bullet.png')
 
 	bgImg = love.graphics.newImage('assets/bg-star.png')
+	startImg = love.graphics.newImage('assets/start-screen.jpg')
 end
 
 function loadSounds()
@@ -308,12 +310,19 @@ function drawBg()
 	love.graphics.pop()
 end
 
+function drawStartImg()
+	love.graphics.push()
+	love.graphics.draw(startImg, (love.graphics.getWidth()/2 - startImg:getWidth()/2), (love.graphics.getHeight()/2 - startImg:getHeight()/2))
+	love.graphics.pop()
+end
+
 -- Drawing
 function love.draw(dt)
-
-	drawBg()
+	love.graphics.clear(0, 0, 0, 1)
 
 	if player.isAlive then
+		drawBg()
+
 		for i, bullet in ipairs(bullets) do
 			love.graphics.draw(bullet.img, bullet.x, bullet.y)
 		end
@@ -327,7 +336,7 @@ function love.draw(dt)
 		if player.deadTime < 30 then
 			love.graphics.draw(player.deadImg, player.x, player.y)
 		end
-		love.graphics.print("Press 'R' (key) or the 'X' (controller button) to restart", love.graphics:getWidth()/2-170, love.graphics:getHeight()/2-10)
+		drawStartImg()
 	end
 
 	love.graphics.setColor(255, 255, 255)
