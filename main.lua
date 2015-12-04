@@ -8,7 +8,9 @@ canToggleDebugTimer = canToggleDebugMax
 canShoot = true
 canShootTimerMax = 0.35
 canShootTimer = canShootTimerMax
-createEnemyTimerMax = 1.575
+initialCreateEnemyTimerMax = 3.5
+createEnemyTimerMax = initialCreateEnemyTimerMax
+createEnemyTimerDecayFactor = 0.9
 createEnemyTimer = createEnemyTimerMax
 
 -- Player Object
@@ -94,6 +96,7 @@ function resetPlayer()
 
 	score = 0
 	player.isAlive = true
+	player.deadTime = 1000
 end
 
 function reset()
@@ -104,6 +107,7 @@ function reset()
 	-- reset timers
 	canToggleDebugTimer = canToggleDebugMax
 	canShootTimer = canShootTimerMax
+	createEnemyTimerMax = initialCreateEnemyTimerMax
 	createEnemyTimer = createEnemyTimerMax
 
 	resetPlayer()
@@ -115,7 +119,6 @@ function loadController()
 	if joysticks[1] then
 		controller = joysticks[1]
 	end
-
 
 end
 
@@ -159,6 +162,7 @@ function love.load(arg)
 	loadSounds()
 	loadFonts()
 	resetPlayer()
+	player.isAlive = false
 
 	love.audio.play(sounds.bgMusic)
 end
@@ -234,6 +238,7 @@ function love.update(dt)
 				enemy.deadTime = 0
 				enemy.img = enemyDeadImage
 				score = score + 1
+				createEnemyTimerMax = createEnemyTimerMax * createEnemyTimerDecayFactor
 				sounds.enemyHit:stop()
 				sounds.enemyHit:play()
 			end
