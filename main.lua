@@ -1,4 +1,7 @@
-debug = true
+debug = false
+canToggleDebug = true
+canToggleDebugMax = 0.35
+canToggleDebugTimer = canToggleDebugMax
 
 -- Timers
 -- We declare these here so we don't have to edit them multiple places
@@ -57,6 +60,11 @@ sounds = {
 	enemyHit = nil
 }
 
+-- fonts
+fonts = {
+	game_over = nil
+}
+
 -- SNES Controller
 controller = nil
 axisDir1 = nil
@@ -94,6 +102,7 @@ function reset()
 	enemies = {}
 
 	-- reset timers
+	canToggleDebugTimer = canToggleDebugMax
 	canShootTimer = canShootTimerMax
 	createEnemyTimer = createEnemyTimerMax
 
@@ -136,11 +145,19 @@ function loadSounds()
 	sounds.enemyHit = love.audio.newSource("assets/sounds_effects/Big Explosion Cut Off.mp3", "static")
 end
 
+
+
+function loadFonts()
+	fonts.game_over = love.graphics.newFont('fonts/game_over.ttf', 128)
+	love.graphics.setFont(fonts.game_over)
+end
+
 -- Loading
 function love.load(arg)
 	loadController()
 	loadImages()
 	loadSounds()
+	loadFonts()
 	resetPlayer()
 
 	love.audio.play(sounds.bgMusic)
@@ -156,6 +173,12 @@ function love.update(dt)
 
 	if controller then
 		axisDir1, axisDir2, axisDir3, axisDir4, axisDir5, axisDir6, axisDir7, axisDir8 = controller:getAxes()
+	end
+
+	-- Time out how far apart our shots can be.
+	canToggleDebugTimer = canToggleDebugTimer - (1 * dt)
+	if canToggleDebugTimer < 0 then
+		canToggleDebug = true
 	end
 
 	-- Time out how far apart our shots can be.
@@ -256,6 +279,16 @@ function love.update(dt)
 		canShootTimer = canShootTimerMax
 	end
 
+	if (love.keyboard.isDown('p')) and canToggleDebug then
+		if debug == true then
+			debug = false
+		else
+			debug = true
+		end
+		canToggleDebug = false
+		canToggleDebugTimer = canToggleDebugMax
+	end
+
 	if not player.isAlive then
 		player.deadTime = player.deadTime + 1
 		if love.keyboard.isDown('r') or (controller and controller:isDown("1")) then
@@ -294,11 +327,6 @@ function love.draw(dt)
 
 	love.graphics.setColor(255, 255, 255)
 	love.graphics.print("SCORE: " .. tostring(score), 400, 10)
-
-	if controller then
-		--love.graphics.print(axisDir1 .. ', ' .. axisDir2 .. ', ' .. axisDir3 .. ', ' .. axisDir4 .. ', ' .. axisDir5, 600, 10)
-		--love.graphics.print(controller:getAxisCount(), 600, 10)
-	end
 
 	if debug then
 		fps = tostring(love.timer.getFPS())
