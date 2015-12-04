@@ -298,7 +298,7 @@ function love.update(dt)
 
 	if not player.isAlive then
 		player.deadTime = player.deadTime + 1
-		if love.keyboard.isDown('r') or (controller and controller:isDown("1")) then
+		if love.keyboard.isDown('r') or love.keyboard.isDown('x') or (controller and controller:isDown("1")) then
 			reset()
 		end
 	end
