@@ -141,7 +141,7 @@ function loadImages()
 
 	bulletImg = love.graphics.newImage('assets/bullet.png')
 
-	bgImg = love.graphics.newImage('assets/bg-star.png')
+	bgImg = love.graphics.newImage('assets/bg-star.jpg')
 	startImg = love.graphics.newImage('assets/start-screen.jpg')
 end
 
