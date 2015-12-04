@@ -29,9 +29,59 @@ player = {
 }
 score = 0
 
+-- Names
+first_names = {
+	'Logan',
+	'Pablo',
+	'Collin',
+	'Giuseppe',
+	'Marty',
+	'Darrell',
+	'Bruce',
+	'Gonzalo',
+	'Jasper',
+	'Victoria',
+	'Felicia',
+	'Stephanie',
+	'Porsche',
+	'Selma',
+	'Maricela',
+	'Skye',
+	'Vernetta',
+	'Sarina',
+	'Maria'
+}
+
+last_names = {
+	'Houston',
+	'Holzworth',
+	'Rushton',
+	'Martina',
+	'Price',
+	'Kitterman',
+	'Rembert',
+	'Silverstein',
+	'Testani',
+	'Gaylor',
+	'Grainger',
+	'Latham',
+	'Strayer',
+	'Shadberry',
+	'Thatcher',
+	'McQuarrie',
+	'Beckert',
+	'Pieroni',
+	'Kimble',
+	'Castro'
+}
+
+last_scored_name = nil
+
+
 -- Image Storage
 bulletImg = nil
 bgImg = nil
+startImg = nil
 
 possibleEnemyPaths = {
 	'assets/@2x/andrew.png',
@@ -83,6 +133,9 @@ axisDir6 = nil
 axisDir7 = nil
 axisDir8 = nil
 
+-- Eriga
+isErigaMode = false
+
 
 -- Collision detection taken function from http://love2d.org/wiki/BoundingBox.lua
 -- Returns true if two boxes overlap, false if they don't
@@ -101,7 +154,7 @@ function resetPlayer()
 
 	score = 0
 	player.isAlive = true
-	player.deadTime = 1000
+	player.deadTime = 30
 end
 
 function reset()
@@ -116,6 +169,8 @@ function reset()
 	createEnemyTimer = createEnemyTimerMax
 
 	resetPlayer()
+
+	isErigaMode = false
 end
 
 function loadController()
@@ -140,7 +195,8 @@ function loadImages()
 
 	bulletImg = love.graphics.newImage('assets/bullet.png')
 
-	bgImg = love.graphics.newImage('assets/bg-star.png')
+	bgImg = love.graphics.newImage('assets/bg-star.jpg')
+	startImg = love.graphics.newImage('assets/start-screen.jpg')
 end
 
 function loadSounds()
@@ -260,7 +316,12 @@ function love.update(dt)
 			showHighscore = true
 			sounds.playerHit:play()
 
-			highscore.add('andrew', score)
+			fname = first_names[math.random(#first_names)]
+			lname = last_names[math.random(#last_names)]
+
+			last_scored_name = fname..' '..lname
+
+			highscore.add(last_scored_name, score)
 		end
 	end
 
@@ -285,6 +346,10 @@ function love.update(dt)
 		end
 	end
 
+	if love.keyboard.isDown('e') then
+		isErigaMode = true
+	end
+
 	if (love.keyboard.isDown(' ', 'rctrl', 'lctrl', 'ctrl') or (controller and controller:isDown("3"))) and canShoot then
 		-- Create some bullets
 		newBullet = { x = player.x + (player.img:getWidth()/2), y = player.y, img = bulletImg }
@@ -307,13 +372,9 @@ function love.update(dt)
 
 	if not player.isAlive then
 
-		highscoreTimer = highscoreTimer - (1 * dt)
-		if highscoreTimer < 0 then
-			showHighscore = false
-		end
 
 		player.deadTime = player.deadTime + 1
-		if love.keyboard.isDown('r') or (controller and controller:isDown("1")) then
+		if love.keyboard.isDown('r') or love.keyboard.isDown('x') or (controller and controller:isDown("1")) then
 			reset()
 		end
 	else
@@ -327,36 +388,55 @@ function drawBg()
 	love.graphics.pop()
 end
 
+function drawStartImg()
+	love.graphics.push()
+	love.graphics.draw(startImg, (love.graphics.getWidth()/2 - startImg:getWidth()/2), (love.graphics.getHeight()/2 - startImg:getHeight()/2))
+	love.graphics.pop()
+end
+
 -- Drawing
 function love.draw(dt)
-
-	drawBg()
+	love.graphics.clear(0, 0, 0, 1)
 
 	if player.isAlive then
+		drawBg()
+
 		for i, bullet in ipairs(bullets) do
 			love.graphics.draw(bullet.img, bullet.x, bullet.y)
 		end
 
 		for i, enemy in ipairs(enemies) do
-			love.graphics.draw(enemy.img, enemy.x, enemy.y)
+			if isErigaMode then
+				love.graphics.draw(possibleEnemyImages[5], enemy.x, enemy.y)
+			else
+				love.graphics.draw(enemy.img, enemy.x, enemy.y)
+			end
 		end
 
 		love.graphics.print("SCORE: " .. tostring(score), 10, 10)
 		love.graphics.draw(player.img, player.x, player.y)
 	else
-		love.graphics.print(player.deadTime, 0, 0)
 		if player.deadTime < 30 then
 			love.graphics.draw(player.deadImg, player.x, player.y)
-		elseif player.deadTime < 1120 then
+		elseif player.deadTime < 500 then
 			love.graphics.print('HIGHSCORES', (love.graphics.getWidth()/2) - (fonts.game_over:getWidth('HIGHSCORES')/2), 20)
 			for i, score, name in highscore() do
-			    love.graphics.print(name, 100, 40 + (i * 45))
+				if name == last_scored_name then
+					love.graphics.setColor(255, 0, 255, 255)
+					if player.deadTime % 2 == 0 then
+						love.graphics.print(name, 100, 40 + (i * 45))
+					end
+					
+				else
+					love.graphics.setColor(255, 255, 255, 255)
+					love.graphics.print(name, 100, 40 + (i * 45))
+				end
+			    
 			    love.graphics.print(score, love.graphics.getWidth() - (fonts.game_over:getWidth(tostring(score)) + 100), 40 + (i * 45))
 			end
 		else
-			love.graphics.print("Press 'R' (key) or the 'X' (controller button) to restart", love.graphics:getWidth()/2-170, love.graphics:getHeight()/2-10)
+			drawStartImg()
 		end
-		
 	end
 
 	love.graphics.setColor(255, 255, 255)
@@ -365,5 +445,6 @@ function love.draw(dt)
 	if debug then
 		fps = tostring(love.timer.getFPS())
 		love.graphics.print("Current FPS: "..fps, 9, 10)
+		love.graphics.print("Dead time: ", player.deadTime, 300, 10)
 	end
 end
