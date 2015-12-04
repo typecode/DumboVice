@@ -261,9 +261,15 @@ function love.update(dt)
 		createEnemyTimer = createEnemyTimerMax
 
 		-- Create an enemy
-		randomNumber = math.random(10, love.graphics.getWidth() - 10)
 
-		newEnemy = { x = randomNumber, y = -10, img = possibleEnemyImages[math.random(#possibleEnemyImages)], isAlive = true }
+		newEnemy = {
+			x = math.random(10, love.graphics.getWidth() - 10),
+			y = -10,
+			img = possibleEnemyImages[math.random(#possibleEnemyImages)],
+			isAlive = true,
+			vX = math.random(-5, 5),
+			vY = 200
+		}
 		table.insert(enemies, newEnemy)
 	end
 
@@ -283,7 +289,8 @@ function love.update(dt)
 			enemy.deadTime = enemy.deadTime + 1
 		end
 
-		enemy.y = enemy.y + (200 * dt)
+		enemy.x = enemy.x + enemy.vX
+		enemy.y = enemy.y + (enemy.vY * dt)
 
 		if enemy.y > love.graphics.getHeight() or (not enemy.isAlive and enemy.deadTime > 10) then
 			table.remove(enemies, i)
@@ -346,7 +353,7 @@ function love.update(dt)
 		end
 	end
 
-	if love.keyboard.isDown('e') then
+	if love.keyboard.isDown('e') or (controller and controller:isDown("9")) then
 		isErigaMode = true
 	end
 
