@@ -279,7 +279,7 @@ function love.update(dt)
 		axisDir1, axisDir2, axisDir3, axisDir4, axisDir5, axisDir6, axisDir7, axisDir8 = controller:getAxes()
 	end
 
-	-- Time out how far apart our shots can be.
+	-- Debug toggler throttle
 	canToggleDebugTimer = canToggleDebugTimer - (1 * dt)
 	if canToggleDebugTimer < 0 then
 		canToggleDebug = true
@@ -344,7 +344,7 @@ function love.update(dt)
 				enemy.isAlive = false
 				enemy.deadTime = 0
 				enemy.img = enemyDeadImage
-				score = score + 1
+				score = score + 1000
 				createEnemyTimerMax = createEnemyTimerMax * createEnemyTimerDecayFactor
 				canShootTimerMax = canShootTimerMax * canShootTimerDecayFactor
 				sounds.enemyHit:stop()
