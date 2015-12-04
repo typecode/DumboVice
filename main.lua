@@ -258,7 +258,7 @@ function love.update(dt)
 
 	if not player.isAlive then
 		player.deadTime = player.deadTime + 1
-		if love.keyboard.isDown('r') then
+		if love.keyboard.isDown('r') or (controller and controller:isDown("1")) then
 			reset()
 		end
 	end
@@ -289,14 +289,14 @@ function love.draw(dt)
 		if player.deadTime < 30 then
 			love.graphics.draw(player.deadImg, player.x, player.y)
 		end
-		love.graphics.print("Press 'R' to restart", love.graphics:getWidth()/2-50, love.graphics:getHeight()/2-10)
+		love.graphics.print("Press 'R' (key) or the 'X' (controller button) to restart", love.graphics:getWidth()/2-170, love.graphics:getHeight()/2-10)
 	end
 
 	love.graphics.setColor(255, 255, 255)
 	love.graphics.print("SCORE: " .. tostring(score), 400, 10)
 
 	if controller then
-		love.graphics.print(axisDir1 .. ', ' .. axisDir2 .. ', ' .. axisDir3 .. ', ' .. axisDir4 .. ', ' .. axisDir5, 600, 10)
+		--love.graphics.print(axisDir1 .. ', ' .. axisDir2 .. ', ' .. axisDir3 .. ', ' .. axisDir4 .. ', ' .. axisDir5, 600, 10)
 		--love.graphics.print(controller:getAxisCount(), 600, 10)
 	end
 
