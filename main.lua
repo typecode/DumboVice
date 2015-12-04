@@ -49,7 +49,24 @@ first_names = {
 	'Skye',
 	'Vernetta',
 	'Sarina',
-	'Maria'
+	'Maria',
+
+	'Andrew',
+	'Ian',
+	'Zeke',
+	'Lev',
+	'Erica',
+	'Pei',
+	'Chris',
+	'Dan',
+	'Josh',
+	'Alex',
+	'Ryan',
+	'Caroline',
+	'Rachel',
+	'Maruska',
+	'Iffy',
+	'Mister'
 }
 
 last_names = {
@@ -72,7 +89,24 @@ last_names = {
 	'Beckert',
 	'Pieroni',
 	'Kimble',
-	'Castro'
+	'Castro',
+
+	'Mahon',
+	'Lord',
+	'Shore',
+	'Kanter',
+	'Peterson',
+	'Ni',
+	'???',
+	'Battelle',
+	'Click',
+	'Levin',
+	'Reigner',
+	'Mate',
+	'Klein',
+	'Maruska',
+	'Iffert',
+	'Shoes'
 }
 
 last_scored_name = nil
@@ -225,7 +259,7 @@ function love.load(arg)
 	resetPlayer()
 	player.isAlive = false
 
-	highscore.set('scores', 10, '', 0)
+	highscore.set('scores', 40, '', 0)
 
 	love.audio.play(sounds.bgMusic)
 end
@@ -267,7 +301,7 @@ function love.update(dt)
 			y = -10,
 			img = possibleEnemyImages[math.random(#possibleEnemyImages)],
 			isAlive = true,
-			vX = math.random(-5, 5),
+			vX = 0, --math.random(-1, 1),
 			vY = 200
 		}
 		table.insert(enemies, newEnemy)
@@ -426,6 +460,7 @@ function love.draw(dt)
 		if player.deadTime < 30 then
 			love.graphics.draw(player.deadImg, player.x, player.y)
 		elseif player.deadTime < 500 then
+			drawBg()
 			love.graphics.print('HIGHSCORES', (love.graphics.getWidth()/2) - (fonts.game_over:getWidth('HIGHSCORES')/2), 20)
 			for i, score, name in highscore() do
 				if name == last_scored_name then
