@@ -61,7 +61,12 @@ sounds = {
 controller = nil
 axisDir1 = nil
 axisDir2 = nil
-axisDirN = nil
+axisDir3 = nil
+axisDir4 = nil
+axisDir5 = nil
+axisDir6 = nil
+axisDir7 = nil
+axisDir8 = nil
 
 
 -- Collision detection taken function from http://love2d.org/wiki/BoundingBox.lua
@@ -150,7 +155,7 @@ function love.update(dt)
 	end
 
 	if controller then
-		axisDir1, axisDir2, axisDirN = controller:getAxes()
+		axisDir1, axisDir2, axisDir3, axisDir4, axisDir5, axisDir6, axisDir7, axisDir8 = controller:getAxes()
 	end
 
 	-- Time out how far apart our shots can be.
@@ -221,27 +226,27 @@ function love.update(dt)
 	end
 
 
-	if love.keyboard.isDown('left','a') then
+	if love.keyboard.isDown('left','a') or (controller and axisDir4 < 0) then
 		if player.x > 0 then -- binds us to the map
 			player.x = player.x - (player.speed*dt)
 		end
-	elseif love.keyboard.isDown('right','d') then
+	elseif love.keyboard.isDown('right','d') or (controller and axisDir4 > 0) then
 		if player.x < (love.graphics.getWidth() - player.img:getWidth()) then
 			player.x = player.x + (player.speed*dt)
 		end
 	end
 
-	if love.keyboard.isDown('up', 'w') or (controller and controller:getAxis(2) < 0) then
+	if love.keyboard.isDown('up', 'w') or (controller and axisDir5 < 0) then
 		if player.y > 0 then
 			player.y = player.y - (player.speed*dt)
 		end
-	elseif love.keyboard.isDown('down', 's') then
+	elseif love.keyboard.isDown('down', 's') or (controller and axisDir5 > 0) then
 		if player.y < (love.graphics.getHeight() - player.img:getHeight()) then
 			player.y = player.y + (player.speed*dt)
 		end
 	end
 
-	if love.keyboard.isDown(' ', 'rctrl', 'lctrl', 'ctrl') or (controller and controller:isDown("3")) and canShoot then
+	if (love.keyboard.isDown(' ', 'rctrl', 'lctrl', 'ctrl') or (controller and controller:isDown("3"))) and canShoot then
 		-- Create some bullets
 		newBullet = { x = player.x + (player.img:getWidth()/2), y = player.y, img = bulletImg }
 		table.insert(bullets, newBullet)
@@ -291,8 +296,8 @@ function love.draw(dt)
 	love.graphics.print("SCORE: " .. tostring(score), 400, 10)
 
 	if controller then
-		love.graphics.print(axisDir1, 600, 10)
-		love.graphics.print(axisDir2, 700, 10)
+		love.graphics.print(axisDir1 .. ', ' .. axisDir2 .. ', ' .. axisDir3 .. ', ' .. axisDir4 .. ', ' .. axisDir5, 600, 10)
+		--love.graphics.print(controller:getAxisCount(), 600, 10)
 	end
 
 	if debug then
