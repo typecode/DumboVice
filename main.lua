@@ -1,7 +1,12 @@
+require('sick')
+
 debug = false
 canToggleDebug = true
 canToggleDebugMax = 0.35
 canToggleDebugTimer = canToggleDebugMax
+
+highscoreTimer = 10
+showHighscore = true
 
 -- Timers
 -- We declare these here so we don't have to edit them multiple places
@@ -164,6 +169,8 @@ function love.load(arg)
 	resetPlayer()
 	player.isAlive = false
 
+	highscore.set('scores', 10, '', 0)
+
 	love.audio.play(sounds.bgMusic)
 end
 
@@ -172,6 +179,7 @@ end
 function love.update(dt)
 	-- I always start with an easy way to exit the game
 	if love.keyboard.isDown('escape') then
+		highscore.save()
 		love.event.push('quit')
 	end
 
@@ -249,7 +257,10 @@ function love.update(dt)
 			table.remove(enemies, i)
 			player.isAlive = false
 			player.deadTime = 0
+			showHighscore = true
 			sounds.playerHit:play()
+
+			highscore.add('andrew', score)
 		end
 	end
 
@@ -295,10 +306,18 @@ function love.update(dt)
 	end
 
 	if not player.isAlive then
+
+		highscoreTimer = highscoreTimer - (1 * dt)
+		if highscoreTimer < 0 then
+			showHighscore = false
+		end
+
 		player.deadTime = player.deadTime + 1
 		if love.keyboard.isDown('r') or (controller and controller:isDown("1")) then
 			reset()
 		end
+	else
+		highscoreTimer = 10
 	end
 end
 
@@ -322,16 +341,26 @@ function love.draw(dt)
 			love.graphics.draw(enemy.img, enemy.x, enemy.y)
 		end
 
+		love.graphics.print("SCORE: " .. tostring(score), 10, 10)
 		love.graphics.draw(player.img, player.x, player.y)
 	else
+		love.graphics.print(player.deadTime, 0, 0)
 		if player.deadTime < 30 then
 			love.graphics.draw(player.deadImg, player.x, player.y)
+		elseif player.deadTime < 1120 then
+			love.graphics.print('HIGHSCORES', (love.graphics.getWidth()/2) - (fonts.game_over:getWidth('HIGHSCORES')/2), 20)
+			for i, score, name in highscore() do
+			    love.graphics.print(name, 100, 40 + (i * 45))
+			    love.graphics.print(score, love.graphics.getWidth() - (fonts.game_over:getWidth(tostring(score)) + 100), 40 + (i * 45))
+			end
+		else
+			love.graphics.print("Press 'R' (key) or the 'X' (controller button) to restart", love.graphics:getWidth()/2-170, love.graphics:getHeight()/2-10)
 		end
-		love.graphics.print("Press 'R' (key) or the 'X' (controller button) to restart", love.graphics:getWidth()/2-170, love.graphics:getHeight()/2-10)
+		
 	end
 
 	love.graphics.setColor(255, 255, 255)
-	love.graphics.print("SCORE: " .. tostring(score), 400, 10)
+	
 
 	if debug then
 		fps = tostring(love.timer.getFPS())
