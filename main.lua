@@ -79,6 +79,9 @@ axisDir6 = nil
 axisDir7 = nil
 axisDir8 = nil
 
+-- Eriga
+isErigaMode = false
+
 
 -- Collision detection taken function from http://love2d.org/wiki/BoundingBox.lua
 -- Returns true if two boxes overlap, false if they don't
@@ -112,6 +115,8 @@ function reset()
 	createEnemyTimer = createEnemyTimerMax
 
 	resetPlayer()
+
+	isErigaMode = false
 end
 
 function loadController()
@@ -276,6 +281,10 @@ function love.update(dt)
 		end
 	end
 
+	if love.keyboard.isDown('e') then
+		isErigaMode = true
+	end
+
 	if (love.keyboard.isDown(' ', 'rctrl', 'lctrl', 'ctrl') or (controller and controller:isDown("3"))) and canShoot then
 		-- Create some bullets
 		newBullet = { x = player.x + (player.img:getWidth()/2), y = player.y, img = bulletImg }
@@ -328,7 +337,11 @@ function love.draw(dt)
 		end
 
 		for i, enemy in ipairs(enemies) do
-			love.graphics.draw(enemy.img, enemy.x, enemy.y)
+			if isErigaMode then
+				love.graphics.draw(possibleEnemyImages[5], enemy.x, enemy.y)
+			else
+				love.graphics.draw(enemy.img, enemy.x, enemy.y)
+			end
 		end
 
 		love.graphics.draw(player.img, player.x, player.y)
