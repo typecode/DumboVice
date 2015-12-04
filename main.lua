@@ -11,8 +11,10 @@ showHighscore = true
 -- Timers
 -- We declare these here so we don't have to edit them multiple places
 canShoot = true
-canShootTimerMax = 0.45
+initialCanShootTimerMax = 0.45;
+canShootTimerMax = initialCanShootTimerMax
 canShootTimerDecayFactor = 0.96
+canShootTimerMin = 0.1
 canShootTimer = canShootTimerMax
 
 initialCreateEnemyTimerMax = 3.5
@@ -200,6 +202,7 @@ function reset()
 
 	-- reset timers
 	canToggleDebugTimer = canToggleDebugMax
+	canShootTimerMax = initialCanShootTimerMax
 	canShootTimer = canShootTimerMax
 	createEnemyTimerMax = initialCreateEnemyTimerMax
 	createEnemyTimer = createEnemyTimerMax
@@ -347,6 +350,9 @@ function love.update(dt)
 				score = score + 1000
 				createEnemyTimerMax = createEnemyTimerMax * createEnemyTimerDecayFactor
 				canShootTimerMax = canShootTimerMax * canShootTimerDecayFactor
+				if canShootTimerMax < canShootTimerMin then
+					canShootTimerMax = canShootTimerMin
+				end
 				sounds.enemyHit:stop()
 				sounds.enemyHit:play()
 			end
