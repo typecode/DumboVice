@@ -429,7 +429,7 @@ function love.draw(dt)
 			love.graphics.print('HIGHSCORES', (love.graphics.getWidth()/2) - (fonts.game_over:getWidth('HIGHSCORES')/2), 20)
 			for i, score, name in highscore() do
 				if name == last_scored_name then
-					love.graphics.setColor(255, 0, 255, 255)
+					love.graphics.setColor(255, 0, 175, 255)
 					if player.deadTime % 2 == 0 then
 						love.graphics.print(name, 100, 40 + (i * 45))
 					end
