@@ -11,8 +11,10 @@ showHighscore = true
 -- Timers
 -- We declare these here so we don't have to edit them multiple places
 canShoot = true
-canShootTimerMax = 0.35
+canShootTimerMax = 0.45
+canShootTimerDecayFactor = 0.96
 canShootTimer = canShootTimerMax
+
 initialCreateEnemyTimerMax = 3.5
 createEnemyTimerMax = initialCreateEnemyTimerMax
 createEnemyTimerDecayFactor = 0.9
@@ -344,6 +346,7 @@ function love.update(dt)
 				enemy.img = enemyDeadImage
 				score = score + 1
 				createEnemyTimerMax = createEnemyTimerMax * createEnemyTimerDecayFactor
+				canShootTimerMax = canShootTimerMax * canShootTimerDecayFactor
 				sounds.enemyHit:stop()
 				sounds.enemyHit:play()
 			end
